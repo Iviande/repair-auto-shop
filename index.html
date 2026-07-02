@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoFix | Modern Car Repair & Rescue</title>
+    <link rel="stylesheet" href="shop.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">AUTO<span>FIX</span></div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#pricing">Subscriptions</a></li>
+            <li><a href="#booking">Book Now</a></li>
+        </ul>
+        <div class="nav-buttons">
+            <button class="btn-secondary" onclick="document.getElementById('signin').scrollIntoView({behavior:'smooth'});">Sign In</button>
+            <button class="btn-primary" onclick="goToStep('pay')">Emergency</button>
+        </div>
+        <!-- STEP 1: Hidden pay page -->
+                        <div id="pay" class="step pay-step">
+    <div class="pay-header">
+        <button class="btn-back" onclick="goToStep('main-site')">← Back</button>
+        <h1 class="h1.pay">FAST, RELIABLE EMRGRNCY  HELP ON THE HIGHWAY </h1>
+        
+        
+    </div>
+    <p>Select your issue, complete the secure payment, and share your location so our rescue team can reach you without delay.</p>
+    <div class="pay-body" style="max-width:720px; margin:18px auto; text-align:left;">
+        <label for="problem-desc">CLICK THE DISCRIPTION THAT BEST MATCHES YOUR PROBLEM</label>
+        <div class="rescue-grid">
+                <button class="issue-btn" onclick="selectIssue(this)">Battery Problems</button>
+                <button class="issue-btn" onclick="selectIssue(this)">Flat Tire</button>
+                <button class="issue-btn" onclick="selectIssue(this)">Engine Overheating</button>
+                <button class="issue-btn" onclick="selectIssue(this)">Fuel Issues</button>
+                <button class="issue-btn" onclick="selectIssue(this)">Brake Problems</button>
+                <button class="issue-btn" onclick="selectIssue(this)">Starter or Ignition</button>
+                <button class="issue-btn" onclick="selectIssue(this)">Locked Keys in Car</button>
+                <button class="issue-btn" onclick="selectIssue(this)">Transmission Failure</button>
+            </div>
+        <textarea id="problem-desc" placeholder="What's wrong with your vehicle?" style="width:100%; padding:10px; margin-top:6px; height:80px;"></textarea>
+<div id="step-2-payment" class="hidden">
+            <div class="opay-card">
+                <div class="opay-logo">OPay</div>
+                <h3>Payment to: <br><strong>AUTO FIX LMT</strong></h3>
+                <div class="opay-amount">₦15,000.00</div>
+                <p class="opay-info">Secure Highway Rescue Transaction</p>
+                
+            </div>
+        </div>
+        <div class="instead">
+            <p class="or">OR YOU CAN USE CARD</p>
+        </div>
+         <div style="margin-top:16px;">
+            <label for="card-number">Card number (test)</label>
+            <input id="card-number" type="text" placeholder="4242 4242 4242 4242" style="padding:10px; width:100%; margin-top:6px;">
+        </div>
+        <div style="margin-top:16px; display:flex; gap:12px;">
+            <button class="btn-pay" onclick="submitPayment()">Pay & Request Help</button>
+            <button class="btn-back" onclick="goToStep('main-site')">Cancel</button>
+        </div>
+        <div id="step-3-details" class="hidden">
+            <h2 class="section-title">Almost there!</h2>
+            <p class="note">Add your vehicle details and location so our team can find you faster.</p>
+            <input type="text" id="carBrand" placeholder="Car Brand (e.g. Toyota, Honda)">
+            <input type="text" id="carColor" placeholder="Car Colour">
+            <textarea id="locationDesc" placeholder="Describe your landmark or current location (e.g. Near Toll Gate)"></textarea>
+            <div class="location-toggle">
+                <div style="margin-top:12px;">
+            <button class="btn-outline" onclick="requestLocation()">Use My Location (Allow browser prompt)</button>
+            <div id="location-info" style="margin-top:8px; color:#ddd;"></div>
+        </div>
+                <label>📍 Turn on Live GPS Location</label>
+                <input type="checkbox" checked>
+            </div>
+            <button class="btn-primary-block" id="done-button" onclick="showFinalMessage()">DONE</button>
+        </div>
+        
+
+        <div id="selected-plan-summary" style="margin-top:12px; color:#ffd700;"></div>
+
+       
+
+        
+    </div>
+</div>
+
+<!-- STEP 2: Hidden processing page -->
+<div id="processing" class="step">
+  <h1>Processing...</h1>
+  <div class="spinner"></div>
+  <p>Please wait while we process your payment.</p>
+</div>
+
+<!-- STEP 3: Hidden success page -->
+<div id="success" class="step">
+    <h1>✅ Payment Successful!</h1>
+    <p>Thanks fro chosing AUTOFIX your saftey is our priority </p>
+    <p id="success-msg">Thank you for your purchase.</p>
+    <button class="btn-back" onclick="goToStep('main-site')">RETURN HOME</button>
+</div>
+
+<!-- STEP: Plan selection page (for subscription flow) -->
+                        <div id="select-plan" class="step select-plan-step">
+    <div class="plan-header">
+        <button class="btn-back" onclick="goToStep('main-site')">← Back</button>
+        <h1 id="plan-title">Choose a Plan</h1>
+    </div>
+    <div class="plan-body">
+        <div class="billing-toggle">
+            <span class="toggle-label">Monthly</span>
+            <label class="switch">
+                <input id="billing-toggle" type="checkbox" onchange="toggleBilling(this.checked)">
+                <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Yearly</span>
+        </div>
+
+        <div id="plans-grid" class="plans-grid">
+            <!-- Plan cards injected here -->
+        </div>
+
+        <div class="plan-actions">
+            <button class="btn-primary" onclick="proceedToPaymentFromPlan()">Proceed to Payment</button>
+            <button class="btn-back" onclick="goToStep('main-site')">Cancel</button>
+        </div>
+    </div>
+</div>
+    </nav>
+
+    <header id="home" class="hero">
+        <div class="hero-content">
+            <h1>Expert Car Care, <br><span>Anytime, Anywhere.</span></h1>
+            <p>From 24/7 roadside assistance to premium interior detailing. Fast, transparent, and reliable.</p>
+            <div class="hero-cta">
+                <a href="#booking" class="btn-primary-lg">Schedule Service</a>
+                <a href="#services" class="btn-outline-lg">View Services</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            
+        </div>
+    </header>
+
+    <section id="services" class="services">
+        <h2 class="section-title">Our Specialized Services</h2>
+        <div class="grid">
+            <div class="card">
+                <img src="tow.jpg" alt="Roadside Rescue">
+                <div class="card-body">
+                    <h3>Roadside Rescue</h3>
+                    <p>Emergency towing, battery jumps, and lockout assistance available 24/7.</p>
+                    <span class="price">From $49.99</span>
+                </div>
+            </div>
+            <div class="card">
+                <img src="imge1.jpeg" alt="Oil Change">
+                <div class="card-body">
+                    <h3>Oil & Fluids</h3>
+                    <p>Full synthetic oil changes and comprehensive fluid top-offs.</p>
+                    <span class="price">From $75.00</span>
+                </div>
+            </div>
+            <div class="card">
+                <img src="inter.jpg" alt="Interior">
+                <div class="card-body">
+                    <h3>Interior Design</h3>
+                    <p>Custom upholstery, dashboard restoration, and detailing.</p>
+                    <span class="price">Custom Quote</span>
+                </div>
+            </div>
+            <div class="card">
+                <img src="tire change.jpeg" alt="Interior">
+                <div class="card-body">
+                    <h3>Wheel Change</h3>
+                    <p>Professional wheel changing services for all vehicle types.</p>
+                    <span class="price">Custom Quote</span>
+                </div>
+            </div>
+            <div class="card">
+                <img src="car wash.jpg" alt="Interior">
+                <div class="card-body">
+                    <h3>Home Car Wash </h3>
+                    <p>We Render Home Car Wash Delivery Services</p>
+                    <span class="price">Custom Quote</span>
+                </div>
+            </div>
+            <div class="card">
+                <img src="battery.jpg" alt="Interior">
+                <div class="card-body">
+                    <h3>Home Car Wash </h3>
+                    <p>We Render Home Car Wash Delivery Services</p>
+                    <span class="price">Custom Quote</span>
+                </div>
+            </div>
+            <div class="card">
+                <img src="electricity.jpg" alt="Interior">
+                <div class="card-body">
+                    <h3>Home Car Wash </h3>
+                    <p>We Render Home Car Wash Delivery Services</p>
+                    <span class="price">Custom Quote</span>
+                </div>
+            </div>
+            <div class="card">
+                <img src="altrnator.jpg" alt="Interior">
+                <div class="card-body">
+                    <h3>Home Car Wash </h3>
+                    <p>We Render Home Car Wash Delivery Services</p>
+                    <span class="price">Custom Quote</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="pricing">
+        <h2 class="section-title">Maintenance Subscriptions</h2>
+        <div class="pricing-container">
+            <div class="price-box">
+                <h3>Bronze</h3>
+                <p class="cost">$19<span>/mo</span></p>
+                <ul>
+                    <li><i class="fas fa-check"></i> 1 Free Oil Change/Year</li>
+                    <li><i class="fas fa-check"></i> Roadside Diagnostics</li>
+                    <li><i class="fas fa-check"></i> 5% Off Parts</li>
+                </ul>
+                <button class="btn-outline" onclick="openSubscription('Basic')">Select Plan</button>
+            </div>
+            <div class="price-box featured">
+                <div class="badge">Most Popular</div>
+                <h3>Silver</h3>
+                <p class="cost">$49<span>/mo</span></p>
+                <ul>
+                    <li><i class="fas fa-check"></i> 2 Free Oil Changes/Year</li>
+                    <li><i class="fas fa-check"></i> Priority Dispatch</li>
+                    <li><i class="fas fa-check"></i> 15% Off Parts</li>
+                </ul>
+                <button class="btn-primary" onclick="openSubscription('Standard')">Select Plan</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="booking" class="booking-section">
+        <div class="form-container">
+            <div id="signin" class="signin-box" style="background:#111; padding:16px; border-radius:8px; margin-bottom:20px;">
+                <h3 style="margin-bottom:8px;">Sign In</h3>
+                <input type="email" id="signin-email" placeholder="Email" style="padding:10px; width:100%; margin-bottom:8px;">
+                <input type="password" id="signin-pass" placeholder="Password" style="padding:10px; width:100%; margin-bottom:8px;">
+                <div style="display:flex; gap:8px;"><button onclick="submitSignIn()" class="btn-primary" style="flex:1;">Sign In</button><button onclick="document.getElementById('signin').classList.add('hidden')" class="btn-back" style="flex:1;">Close</button></div>
+            </div>
+            <h2>Book Your Service</h2>
+            <form id="repairForm">
+                <div class="form-group">
+                    <input type="text" placeholder="Full Name" required>
+                    <input type="email" placeholder="Email Address" required>
+                </div>
+                <select required>
+                    <option value="">Select Service</option>
+                    <option value="rescue">Roadside Rescue</option>
+                    <option value="oil">Oil Change</option>
+                    <option value="paint">Painting & Body</option>
+                    <option value="interior">Interior Detailing</option>
+                    <option value="car-wash">Home Car Wash</option>
+                    <option value="tire">Wheel Change</option>
+                </select>
+                <textarea placeholder="Vehicle Details (Make, Model, Year)"></textarea>
+                <button type="submit" class="btn-primary-block">Confirm Booking</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 AUTOFIX Online Shop. All Rights Reserved.</p>
+    </footer>
+
+    <script src="shop.js"></script>
+</body>
+</html>
